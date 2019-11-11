@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, url_for, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 import json
 import time
@@ -14,9 +14,7 @@ room_occupy = {"2019/10/01": {"一号楼A302": 0}}
 # 教室占用网页
 @app.route('/dashboard')
 def dashboard():
-    now = time.strftime("%Y-%m-%d", time.localtime())
-    print(now)
-    return 'Hello World!'
+    return render_template("dashboard.html")
 
 
 # 根据日期返回教室占用
@@ -32,7 +30,7 @@ def getOccupy():
 # 返回网页 （借哪个教室）
 @app.route('/submit')
 def submit():
-    return 'Hello World!'
+    return render_template("submit.html")
 
 
 @app.route('/submitResult')
@@ -41,7 +39,7 @@ def submitResult():
 
 
 # record series
-# 订单
+# 订单 渲染
 @app.route('/record')
 def record():
     return 'Hello World!'
@@ -55,7 +53,7 @@ def withdraw():
 
 @app.route('/')
 def home():
-    return 'Hello World!'
+    return redirect("/dashboard")
 
 
 if __name__ == '__main__':
