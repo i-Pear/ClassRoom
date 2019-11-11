@@ -18,6 +18,7 @@ import init_db
 room_occupy = {"2019/10/01": {"一号楼A302": 0}}
 
 
+# Accepted √
 def getOpenID(code):
     url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code" % (
         WECHAT_APPID, WECHAT_APPSECRET, code)
@@ -28,6 +29,7 @@ def getOpenID(code):
 
 # dashboard series
 # 教室占用网页
+# Accepted √
 @app.route('/dashboard')
 def dashboard():
     return render_template("dashboard.html")
@@ -81,10 +83,12 @@ def withdraw():
     withdrawID = str(request.args["id"])
 
 
+# Accepted √
 @app.route('/')
 def home():
     return redirect("/dashboard")
 
 
+# Accepted √
 if __name__ == '__main__':
     app.run()
