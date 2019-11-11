@@ -1,7 +1,7 @@
 from flask import Flask, request, url_for, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
+import init_db
 import json
-import time
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
