@@ -1,10 +1,11 @@
 from flask import Flask, request, url_for, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
-import init_db
 import json
 
 app = Flask(__name__)
+app.config.from_object('config')
 db = SQLAlchemy(app)
+import init_db
 # key：教室名称如 一号楼A302 类型string
 # value：教室状态如 000000000000 类型int
 room_occupy = {"2019/10/01": {"一号楼A302": 0}}
