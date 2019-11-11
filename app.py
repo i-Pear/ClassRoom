@@ -27,6 +27,11 @@ def getOpenID(code):
     return resp_dict["openid"]
 
 
+def getStuID(openid):
+    # 在这里查询student数据库
+    return "20184444"
+
+
 # dashboard series
 # 教室占用网页
 # Accepted √
@@ -70,7 +75,7 @@ def submitResult():
 @app.route('/record')
 def record():
     openid = getOpenID(str(request.args["code"]))
-    stuid = request.args["stuid"]
+    stuid = getStuID(openid)
     request_records = RequestEntry.query.filter(RequestEntry.stuid == stuid).all()
     # TODO 把过期的请求删一下
 
