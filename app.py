@@ -6,7 +6,7 @@ app = Flask(__name__)
 db = SQLAlchemy(app)
 # key：教室名称如 一号楼A302 类型string
 # value：教室状态如 000000000000 类型int
-room_occupy = {"2019/10/01": {"一号楼A302", 0}}
+room_occupy = {"2019/10/01": {"一号楼A302": 0}}
 
 
 # dashboard series
@@ -19,10 +19,10 @@ def dashboard():
 # 根据日期返回教室占用
 @app.route('/getOccupy')
 def getOccupy():
-    date = request.args["date"]
+    date = str(request.args["date"])
     if date in room_occupy:
-        return room_occupy[date]
-    return {}
+        return json.dumps(room_occupy[date])
+    return json.dumps({})
 
 
 # submit series
