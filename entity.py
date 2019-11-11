@@ -14,8 +14,7 @@ class RequestEntry(db.Model):
     requestReason = db.Column(db.VARCHAR(500), default="")
     status = db.Column(db.INTEGER, default=0)
 
-    def __init__(self, id: int, stuid: int, classroom: str, date: int, segment: int, requestReason: str, ):
-        self.id = id
+    def __init__(self, stuid: int, classroom: str, date: int, segment: int, requestReason: str, ):
         self.stuid = stuid
         self.classroom = classroom
         self.date = date
@@ -25,3 +24,35 @@ class RequestEntry(db.Model):
     def __repr__(self):
         return f"<Entry of request {self.id}: stuid {self.stuid} requested classroom {self.classroom} on {self.date} segment {self.segment} " \
                f" requestTime:{self.requestTime} requestReason:{self.requestReason} status:{self.status}"
+
+
+class ClassroomEntry(db.Model):
+    __tablename__ = "classroom"
+
+    classroom = db.Column(db.VARCHAR(20), index=True, nullable=False)
+    date = db.Column(db.INTEGER, index=True, nullable=False)
+    occupy = db.Column(db.INTEGER, default=0)
+
+    def __init__(self, classroom: str, date: int, occupy: int):
+        self.classroom = classroom
+        self.date = date
+        self.occupy = occupy
+
+    def __repr__(self):
+        return f"<Entry of classroom: {self.classroom} @ {self.date} @ {self.occupy}"
+
+
+class StudentEntry(db.Model):
+    __tablename__ = "student"
+
+    stuid = db.Column(db.INTEGER, primary_key=True, nullable=False)
+    openid = db.Column(db.VARCHAR(64), index=True, nullable=False)
+    authSha1 = db.Column(db.VARCHAR(64), default="")
+
+    def __init__(self, stuid: int, openid: str, authSha1: str):
+        self.stuid = stuid
+        self.openid = openid
+        self.authSha1 = authSha1
+
+    def __repr__(self):
+        return f"<Entry of student: {self.stuid} @ {self.openid} @ {self.authSha1}"
