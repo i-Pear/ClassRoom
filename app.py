@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 import json
+import time
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -13,6 +14,8 @@ room_occupy = {"2019/10/01": {"一号楼A302": 0}}
 # 教室占用网页
 @app.route('/dashboard')
 def dashboard():
+    now = time.strftime("%Y-%m-%d", time.localtime())
+    print(now)
     return 'Hello World!'
 
 
