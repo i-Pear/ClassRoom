@@ -2,25 +2,31 @@ from flask import Flask,request
 
 app = Flask(__name__)
 
-
+# dashboard series
 @app.route('/dashboard')
 def dashboard():
     return 'Hello World!'
 
+@app.route('/getOccupy')
+def getOccupy():
+    return 'Hello World!'
+
+# submit series
 @app.route('/submit')
-def ():
+def submit():
     return 'Hello World!'
 
-@app.route('/checkAvailable')
-def checkAvailable():
+@app.route('/submitResult')
+def submitResult():
     return 'Hello World!'
 
-@app.route('/')
-def ():
+#record series
+@app.route('/record')
+def record():
     return 'Hello World!'
 
-@app.route('/')
-def ():
+@app.route('/withdraw')
+def withdraw():
     return 'Hello World!'
 
 @app.route('/')
