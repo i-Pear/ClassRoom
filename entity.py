@@ -1,5 +1,6 @@
 from app import db
 
+
 class Entry(db.Model):
     __tablename__ = "requests"
 
@@ -26,4 +27,3 @@ class Entry(db.Model):
     def __repr__(self):
         return f"<Entry of user {self.username}: {self.realname} @ {self.clazz} of {self.academy} Tel {self.phone} " \
                f"Choice {self.choice} HasFile {self.has_file}>"
-

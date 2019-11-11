@@ -1,9 +1,12 @@
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
+import json
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
-
+# key：教室名称如 一号楼A302 类型string
+# value：教室状态如 000000000000 类型int
+room_occupy = {"2019/10/01": {"一号楼A302", 0}}
 
 
 # dashboard series
@@ -16,7 +19,10 @@ def dashboard():
 # 根据日期返回教室占用
 @app.route('/getOccupy')
 def getOccupy():
-    return 'Hello World!'
+    date = request.args["date"]
+    if date in room_occupy:
+        return room_occupy[date]
+    return {}
 
 
 # submit series
