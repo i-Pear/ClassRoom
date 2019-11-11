@@ -48,11 +48,13 @@ class StudentEntry(db.Model):
     stuid = db.Column(db.INTEGER, primary_key=True, nullable=False)
     openid = db.Column(db.VARCHAR(64), index=True, nullable=False)
     authSha1 = db.Column(db.VARCHAR(64), default="")
+    tempAuth = db.Column(db.VARCHAR(64), default="")
 
-    def __init__(self, stuid: int, openid: str, authSha1: str):
+    def __init__(self, stuid: int, openid: str, authSha1: str, tempAuth: str):
         self.stuid = stuid
         self.openid = openid
         self.authSha1 = authSha1
+        self.tempAuth = tempAuth
 
     def __repr__(self):
-        return f"<Entry of student: {self.stuid} @ {self.openid} @ {self.authSha1}"
+        return f"<Entry of student: {self.stuid} @ {self.openid} @ {self.authSha1} @ {self.tempAuth}"

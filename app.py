@@ -48,7 +48,7 @@ def record():
 # 撤回
 @app.route('/withdraw')
 def withdraw():
-    return 'Hello World!'
+    withdrawID = str(request.args["id"])
 
 
 @app.route('/')
