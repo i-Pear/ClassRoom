@@ -94,6 +94,17 @@ def home():
     return redirect("/dashboard")
 
 
+# 绑定用户
+@app.route('/bind')
+def bind():
+    return render_template("bind.html")
+
+
+# 验证用户绑定信息
+@app.route('/bindCheck')
+def bindCheck():
+    return "ok"
+
 # Accepted √
 if __name__ == '__main__':
     app.run()
