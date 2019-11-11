@@ -53,7 +53,11 @@ def submitResult():
 # 订单 渲染
 @app.route('/record')
 def record():
-    return 'Hello World!'
+    stuid = request.args["stuid"]
+    request_records = RequestEntry.query.filter(RequestEntry.stuid == stuid).all()
+    # TODO 把过期的请求删一下
+
+    return render_template("record.html", records=request_records)
 
 
 # 撤回
