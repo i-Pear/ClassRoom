@@ -64,9 +64,12 @@
                                        { text: '第11节', value: '11' }, { text: '第12节', value: '12' }]"
                                  :filter-method="filterSeg">
                     <template slot-scope="scope">
-                        <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium"> {{ scope.row.segment }}</el-tag>
-                        </div>
+                        <el-popover trigger="hover" placement="top">
+                            <p>空闲节数：{{ scope.row.segment }}</p>
+                            <div slot="reference" class="name-wrapper">
+                                <el-tag size="medium"> {{ formatterSeg(scope.row.segment) }}</el-tag>
+                            </div>
+                        </el-popover>
                     </template>
 
                 </el-table-column>
@@ -91,7 +94,7 @@
                     {
                         date: "2016-05-03",
                         name: "A201",
-                        segment: "1 2 3 4"
+                        segment: "1 2 3 4 5 6 7 8 9 10 11 12"
                     },
                     {
                         date: "2016-05-02",
@@ -141,6 +144,13 @@
                     return true;
                 }
                 return false;
+            },
+            formatterSeg(t) {
+                if (t.length < 10) {
+                    return t;
+                } else {
+                    return "...";
+                }
             }
         }
     };
