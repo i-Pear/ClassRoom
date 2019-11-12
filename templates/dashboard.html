@@ -1,10 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="//unpkg.com/vue/dist/vue.js"></script>
+    <script src="//unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <title>DashBoard</title>
+    <style type="text/css">
+        @import url("//unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css");
+
+        body, html {
+            font-family: Microsoft YaHei, DengXian, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, SimSun, sans-serif;
+        }
+
+        .el-tag {
+            font-size: 15.5px;
+        }
+    </style>
 </head>
+
 <body>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="//unpkg.com/vue/dist/vue.js"></script>
+    <script src="//unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body>
+<div id="app">
+    <template>
+        <el-table :data="tableData" stripe style="width: 100%">
+            <el-table-column prop="name" label="教室" width="150%"
+                             :filters="[{ text: 'A201', value: 'A201' }, { text: 'A202', value: 'A202' }]"
+                             :filter-method="filterName">
+            </el-table-column>
+            <el-table-column prop="date" label="日期"></el-table-column>
+            <el-table-column prop="segment" label="空闲节数" style="font-size:5px !important"
+                             :filters="[{ text: '第1节', value: '1' }, { text: '第2节', value: '2' },
+                                       { text: '第3节', value: '3' }, { text: '第4节', value: '4' },
+                                       { text: '第5节', value: '5' }, { text: '第6节', value: '6' },
+                                       { text: '第7节', value: '7' }, { text: '第8节', value: '8' },
+                                       { text: '第9节', value: '9' }, { text: '第10节', value: '10' },
+                                       { text: '第11节', value: '11' }, { text: '第12节', value: '12' }]"
+                             :filter-method="filterSeg">
+                <template slot-scope="scope">
+                    <div slot="reference" class="name-wrapper">
+                        <el-tag size="medium"> {{ scope.row.segment }}</el-tag>
+                    </div>
+                </template>
+
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="primary"
+                               @click="handleSelect(scope.row.name,scope.row.date,scope.row.segment)">申请借用
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+</div>
+</body>
+
+</html>
+<div id="app">
+    <template>
+        <el-table :data="tableData" style="width: 100%">
+            <el-table-column prop="name" label="教室" width="150%"
+                             :filters="[{ text: 'A201', value: 'A201' }, { text: 'A202', value: 'A202' }]"
+                             :filter-method="filterName">
+            </el-table-column>
+            <el-table-column prop="date" label="日期"></el-table-column>
+            <el-table-column prop="segment" label="空闲节数" style="font-size:5px !important"
+                             :filters="[{ text: '第1节', value: '1' }, { text: '第2节', value: '2' },
+                                       { text: '第3节', value: '3' }, { text: '第4节', value: '4' },
+                                       { text: '第5节', value: '5' }, { text: '第6节', value: '6' },
+                                       { text: '第7节', value: '7' }, { text: '第8节', value: '8' },
+                                       { text: '第9节', value: '9' }, { text: '第10节', value: '10' },
+                                       { text: '第11节', value: '11' }, { text: '第12节', value: '12' }]"
+                             :filter-method="filterSeg">
+                <template slot-scope="scope">
+                    <div slot="reference" class="name-wrapper">
+                        <el-tag size="medium"> {{ scope.row.segment }}</el-tag>
+                    </div>
+                </template>
+
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="primary"
+                               @click="handleSelect(scope.row.name,scope.row.date,scope.row.segment)">申请借用
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+</div>
+
+<script>
+    var Main = {
+        data() {
+            return {
+                tableData: [
+                    {
+                        date: "2016-05-03",
+                        name: "A201",
+                        segment: "1 2 3 4"
+                    },
+                    {
+                        date: "2016-05-02",
+                        name: "A202",
+                        segment: "3 4 5 6"
+                    },
+                    {
+                        date: "2016-05-04",
+                        name: "A301",
+                        segment: "1 2"
+                    },
+                    {
+                        date: "2016-05-01",
+                        name: "A103",
+                        segment: "5 6 7 8"
+                    },
+                    {
+                        date: "2016-05-08",
+                        name: "A401",
+                        segment: "11 12"
+                    }
+                ]
+            };
+        },
+        methods: {
+            handleSelect(classroom, date, segment) {
+                console.log(classroom, date, segment);
+                let tips = "请确认选择的借用信息：" + "<br>" + date + "&nbsp;&nbsp;&nbsp;" + classroom + "&nbsp;（可用" + segment + "节）";
+                this.$confirm(tips, "提示", {
+                    dangerouslyUseHTMLString: true,
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "info"
+                }).then(() => {
+                    this.$message({
+                        type: "success",
+                        message: "正在重定向至新页面…"
+                    });
+                });
+            },
+            filterName(value, row) {
+                return row.name === value;
+            },
+            filterSeg(value, row) {
+                var index = $.inArray(value, row.segment.split(' '));
+                if (index >= 0) {
+                    return true;
+                }
+                return false;
+            }
+        }
+    };
+    var Ctor = Vue.extend(Main);
+    new Ctor().$mount("#app");
+
+</script>
 
 </body>
+
 </html>
