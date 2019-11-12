@@ -1,6 +1,5 @@
 from flask import Flask, request, url_for, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
-from entity import *
 import json
 import time
 import urllib.request
@@ -12,6 +11,7 @@ app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 import init_db
+from entity import *
 
 # key：教室名称如 一号楼A302 类型string
 # value：教室状态如 000000000000 类型int
