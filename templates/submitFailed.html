@@ -47,6 +47,7 @@
 </div>
 <script>
     function CloseWebPage() {
+        WeixinJSBridge.call('closeWindow');
         if (navigator.userAgent.indexOf("MSIE") > 0) {
             if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
                 window.opener = null;
