@@ -1,1 +1,1 @@
-SQLALCHEMY_DATABASE_URI = "mysql://root:2000021177lty@127.0.0.1/test"
+SQLALCHEMY_DATABASE_URI = "mysql://mysqlcnm:mysqlcnm&233@127.0.0.1/test"
