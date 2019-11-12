@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="//unpkg.com/vue/dist/vue.js"></script>
     <script src="//unpkg.com/element-ui@2.12.0/lib/index.js"></script>
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -32,6 +32,17 @@
 
 <body>
 <div id="app">
+    <template>
+        <div class="block" style="text-align:center">
+            <br>
+            <span class="demonstration">选择日期&nbsp;</span>
+            <el-date-picker
+                    v-model="valueDate"
+                    type="date"
+                    placeholder="选择日期">
+            </el-date-picker>
+        </div>
+    </template>
     <template>
         <el-table :data="tableData" stripe style="width: 100%">
             <el-table-column prop="name" label="教室" width="150%"
@@ -105,6 +116,7 @@
     var Main = {
         data() {
             return {
+                valueDate: '',
                 tableData: [
                     {
                         date: "2016-05-03",
