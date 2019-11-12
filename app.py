@@ -29,6 +29,7 @@ def getOpenID(code):
 
 def getStuID(openid):
     # 在这里查询student数据库
+    db.query(StudentEntry).filter_by(name='user1').all()
     return "20184444"
 
 
@@ -104,6 +105,7 @@ def bind():
 @app.route('/bindCheck')
 def bindCheck():
     return "ok"
+
 
 # Accepted √
 if __name__ == '__main__':
