@@ -1,5 +1,6 @@
-from flask import Flask, request, url_for, render_template, redirect
+from flask import Flask, request, url_for, render_template, redirect, session
 from flask_sqlalchemy import SQLAlchemy
+import os
 import json
 import time
 import urllib.request
@@ -10,6 +11,8 @@ WECHAT_APPID = ""
 WECHAT_APPSECRET = ""
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.urandom(24)
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365 // 2)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 import init_db
@@ -100,13 +103,19 @@ def submit():
 @app.route('/submitResult', methods=['POST'])
 def submitResult():
     jd = request.json
-    openid = getOpenID(str(jd["code"]))
+    openid = session[session.get("user")]
+    if openid is None:
+        return json.dumps({
+            "state": -1,
+            "message": "access denied"
+        })
     room = str(jd["room"])
     date = jd["date"]
     seg = int(jd["segment"])
     reason = str(jd["requestReason"])
     success, stuid = getStuID(openid)
-    if not (success and is_allowed_room(room) and is_allowed_date(date) and is_allowed_reason(reason) and is_allowed_segment(seg)):
+    if not (success and is_allowed_room(room) and is_allowed_date(date) and is_allowed_reason(
+            reason) and is_allowed_segment(seg)):
         return json.dumps({
             "state": -1,
             "message": "format error"
@@ -124,7 +133,12 @@ def submitResult():
 # 订单
 @app.route('/record')
 def record():
-    openid = getOpenID(str(request.args["code"]))
+    openid = session[session.get("user")]
+    if openid is None:
+        return json.dumps({
+            "state": -1,
+            "message": "access denied"
+        })
     success, stuid = getStuID(openid)
     if not success:
         return json.dumps({
@@ -155,7 +169,12 @@ def record():
 # 撤回
 @app.route('/withdraw')
 def withdraw():
-    openid = getOpenID(str(request.args["code"]))
+    openid = session[session.get("user")]
+    if openid is None:
+        return json.dumps({
+            "state": -1,
+            "message": "access denied"
+        })
     success, stuid = getStuID(openid)
     if not success:
         return json.dumps({
@@ -178,28 +197,34 @@ def home():
     return redirect(url_for(dashboard))
 
 
+def get_student_from_db(stuid):
+    anss = StudentEntry.query.filter(StudentEntry.stuid == stuid).all()
+    for ans in anss:
+        return ans
+    return None
+
+
 # 绑定用户
 @app.route('/bind')
 def bind():
     jd = request.json
     stuid = int(jd["stuid"])
+    stu = get_student_from_db(stuid)
+    sha1 = jd["authSha1"]
+    if stu is None or stu.authSha1 != sha1:
+        return json.dumps({
+            "state": -1,
+            "message": "invalid identity"
+        })
     openid = getOpenID(jd["code"])
-    sha1_obj = sha1()
-    sha1_obj.update(str(stuid) + str(openid))
-    sha1code = sha1_obj.hexdigest()
-    stu = StudentEntry(stuid, openid, sha1code, "Student")
-    db.session.add(stu)
+    stu.openid = openid
     db.session.commit()
+    session.permanent = True
+    session[session.get("user")] = openid
     return json.dumps({
         "state": 233,
         "message": "bind successful"
     })
-
-
-# 验证用户绑定信息
-@app.route('/bindCheck')
-def bindCheck():
-    return "ok"
 
 
 # Accepted √
