@@ -40,6 +40,7 @@
             <br>
             <span class="demonstration">选择日期&nbsp;</span>
             <el-date-picker
+                    @change="dateChange"
                     v-model="valueDate"
                     type="date"
                     placeholder="选择日期">
@@ -151,6 +152,9 @@
                 } else {
                     return "...";
                 }
+            },
+            dateChange(t){
+                console.log(t);
             }
         }
     };
