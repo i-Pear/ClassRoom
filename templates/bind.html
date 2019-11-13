@@ -11,7 +11,15 @@
     <style type="text/css">
         @import url("//unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css");
 
-        body {
+        body, html {
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent
         }
     </style>
     <title>绑定用户</title>
@@ -19,21 +27,27 @@
 
 <body>
 <div id="app">
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="姓名" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
-        </el-form-item>
-        <el-form-item label="学号" prop="stuid">
-            <el-input v-model="ruleForm.stuid"></el-input>
-        </el-form-item>
-        <el-form-item label="身份证号" prop="idcard">
-            <el-input v-model="ruleForm.idcard"></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-            <el-button @click="resetForm('ruleForm')">重置</el-button>
-        </el-form-item>
-    </el-form>
+    <el-row style="text-align:center">
+        <br><br>
+        <font size="5px">绑定用户</font><br><br><br>
+    </el-row>
+    <el-row>
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" style="width:80%">
+            <el-form-item label="姓名" prop="name">
+                <el-input v-model="ruleForm.name"></el-input>
+            </el-form-item>
+            <el-form-item label="学号" prop="stuid">
+                <el-input v-model="ruleForm.stuid"></el-input>
+            </el-form-item>
+            <el-form-item label="身份证号" prop="idcard">
+                <el-input v-model="ruleForm.idcard"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                <el-button @click="resetForm('ruleForm')">重置</el-button>
+            </el-form-item>
+        </el-form>
+    </el-row>
 </div>
 <script>
     var Main = {
