@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=0.8">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//unpkg.com/vue/dist/vue.js"></script>
+    <script src="//unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+    <style type="text/css">
+        @import url("//unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css");
+
+        body, html {
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent
+        }
+    </style>
+    <title>提交申请</title>
+</head>
+<body>
+<div id="app">
+    <el-row style="text-align:center">
+        <br><br>
+        <font size="5px">提交申请</font><br><br>
+    </el-row>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="选择教室" prop="classroom" required>
+            <el-cascader v-model="ruleForm.classroom" :options="options"></el-cascader>
+        </el-form-item>
+        <el-form-item label="选择时间" required>
+            <el-col :span="11">
+                <el-form-item prop="date">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.date">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+        </el-form-item>
+        <el-form-item label="需要多媒体" prop="hasMulMedia" required>
+            <el-switch v-model="ruleForm.hasMulMedia"></el-switch>
+        </el-form-item>
+        <el-form-item label="租借节数" prop="segment" required>
+            <el-checkbox-group v-model="ruleForm.segment">
+                <el-checkbox label="1" name="type"></el-checkbox>
+                <el-checkbox label="2" name="type"></el-checkbox>
+                <el-checkbox label="3" name="type"></el-checkbox>
+                <el-checkbox label="4 " name="type"></el-checkbox>
+                <br>
+                <el-checkbox label="5 " name="type"></el-checkbox>
+                <el-checkbox label="6 " name="type"></el-checkbox>
+                <el-checkbox label="7" name="type"></el-checkbox>
+                <el-checkbox label="8" name="type"></el-checkbox>
+                <br>
+                <el-checkbox label="9" name="type"></el-checkbox>
+                <el-checkbox label="10" name="type"></el-checkbox>
+                <el-checkbox label="11" name="type"></el-checkbox>
+                <el-checkbox label="12" name="type"></el-checkbox>
+            </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="教室用途" prop="usage" required>
+            <el-radio-group v-model="ruleForm.usage">
+                <el-radio label="团日/班级活动"></el-radio>
+                <el-radio label="社团/组织借用"></el-radio>
+                <el-radio label="学院借用"></el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="租借理由" prop="reason" :rows="3" style="width:90%">
+            <el-input type="textarea" v-model="ruleForm.reason"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+            <el-button @click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+    </el-form>
+        </el-row>
+</div>
+<script>
+    var Main = {
+        data() {
+            return {
+                ruleForm: {
+                    classroom: "",
+                    date: "",
+                    hasMulMedia: false,
+                    segment: [],
+                    usage: "",
+                    reason: ""
+                },
+                rules: {},
+                options: [
+                    {
+                        value: "1F",
+                        label: "1F",
+                        children: [
+                            {
+                                value: "A101",
+                                label: "A101"
+                            },
+                            {
+                                value: "A103",
+                                label: "A103"
+                            }
+                        ]
+                    },
+                    {
+                        value: "2F",
+                        label: "2F",
+                        children: [
+                            {
+                                value: "A202",
+                                label: "A202"
+                            },
+                            {
+                                value: "A205",
+                                label: "A205"
+                            }
+                        ]
+                    },
+                    {
+                        value: "3F",
+                        label: "3F",
+                        children: [
+                            {
+                                value: "A303",
+                                label: "A303"
+                            },
+                            {
+                                value: "A307",
+                                label: "A307"
+                            },
+                            {
+                                value: "A309",
+                                label: "A309"
+                            }
+                        ]
+                    }
+                ]
+            };
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate(valid => {
+                    if (valid) {
+                        // Submit Here
+                        alert("submit!");
+                        let classroom = this.ruleForm.classroom;
+                        let date = this.ruleForm.date;
+                        let hasMulMedia = this.ruleForm.hasMulMedia;
+                        let segment = this.ruleForm.segment;
+                        let usage = this.ruleForm.usage;
+                        let reason = this.ruleForm.reason;
+                        console.log(classroom);
+                        console.log(date);
+                        console.log(hasMulMedia);
+                        console.log(segment);
+                        console.log(usage);
+                        console.log(reason);
+                    } else {
+                        console.log("error submit!!");
+                        return false;
+                    }
+                });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            }
+        }
+    };
+    var Ctor = Vue.extend(Main);
+    new Ctor().$mount("#app");
+
+</script>
+</body>
+
+</html>

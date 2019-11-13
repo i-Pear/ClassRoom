@@ -5,7 +5,7 @@ import datetime
 class RequestEntry(db.Model):
     __tablename__ = "requests"
 
-    id = db.Column(db.INTEGER, primary_key=True, nullable=False, autoincrement=1)
+    id = db.Column(db.INTEGER, primary_key=True, autoincrement=True)
     stuid = db.Column(db.INTEGER, index=True, nullable=False)
     classroom = db.Column(db.VARCHAR(20), index=True, nullable=False)
     date = db.Column(db.INTEGER, nullable=False)
@@ -29,7 +29,8 @@ class RequestEntry(db.Model):
 class ClassroomEntry(db.Model):
     __tablename__ = "classroom"
 
-    classroom = db.Column(db.VARCHAR(20), index=True, nullable=False, primary_key=True)
+    id = db.Column(db.INTEGER, primary_key=True, autoincrement=True)
+    classroom = db.Column(db.VARCHAR(20), index=True, nullable=False)
     date = db.Column(db.INTEGER, index=True, nullable=False)
     occupy = db.Column(db.INTEGER, default=0)
 
@@ -46,7 +47,7 @@ class StudentEntry(db.Model):
     __tablename__ = "student"
 
     stuid = db.Column(db.INTEGER, primary_key=True, nullable=False)
-    openid = db.Column(db.VARCHAR(64), index=True, nullable=False)
+    openid = db.Column(db.VARCHAR(64), index=True)
     authSha1 = db.Column(db.VARCHAR(64), default="")
     tempAuth = db.Column(db.VARCHAR(64), default="")
 

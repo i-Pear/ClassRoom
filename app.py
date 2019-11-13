@@ -20,7 +20,7 @@ from entity import *
 
 # key：教室名称如 一号楼_A302 类型string
 # value：教室状态如 000000000000 类型int
-room_occupy = {"20191001": {"一号楼_A302": 0}}
+room_occupy = {"20191001": {"一号楼_A302": 0, "建筑楼_A666": 0}}
 
 
 # Accepted √
@@ -34,7 +34,7 @@ def getOpenID(code):
 
 def getStuID(openid):
     # 在这里查询student数据库
-    answers = StudentEntry.query.filter(openid=int(openid)).all()
+    answers = StudentEntry.query.filter(StudentEntry.openid == str(openid)).all()
     for ans in answers:
         return True, ans.stuid
     return False, -1
@@ -45,7 +45,7 @@ def getStuID(openid):
 # Accepted √
 @app.route('/dashboard')
 def dashboard():
-    return render_template("dashboard.html")
+    return redirect(url_for("static", filename="dashboard.html"))
 
 
 # 根据日期返回教室占用
@@ -80,7 +80,8 @@ def getOccupyByRoom():
             "state": -1,
             "message": "format error"
         })
-    answers = ClassroomEntry.query.filter(ClassroomEntry.classroom == room and ClassroomEntry.date == int(date)).all()
+    answers = ClassroomEntry.query.filter(ClassroomEntry.classroom == room).filter(
+        ClassroomEntry.date == int(date)).all()
     for ans in answers:
         return json.dumps({
             "state": 231,
@@ -88,8 +89,9 @@ def getOccupyByRoom():
             "data": ans.occupy
         })
     return json.dumps({
-        "state": -1,
-        "message": "can't find the room in this date"
+        "state": 231,
+        "message": "can't find the room in this date",
+        "data": 0
     })
 
 
@@ -97,7 +99,7 @@ def getOccupyByRoom():
 # 返回网页 （借哪个教室）
 @app.route('/submit')
 def submit():
-    return render_template("submit.html")
+    return redirect(url_for("static", filename="submit.html"))
 
 
 def add_occupy_to_date(date, room, seg):
@@ -112,7 +114,7 @@ def add_occupy_to_date(date, room, seg):
 @app.route('/submitResult', methods=['POST'])
 def submitResult():
     jd = request.json
-    openid = session[session.get("user")]
+    openid = session['username']
     if openid is None:
         return json.dumps({
             "state": -1,
@@ -143,7 +145,7 @@ def submitResult():
 # 订单
 @app.route('/record')
 def record():
-    openid = session[session.get("user")]
+    openid = session['username']
     if openid is None:
         return json.dumps({
             "state": -1,
@@ -179,7 +181,7 @@ def record():
 # 撤回
 @app.route('/withdraw')
 def withdraw():
-    openid = session[session.get("user")]
+    openid = session['username']
     if openid is None:
         return json.dumps({
             "state": -1,
@@ -204,33 +206,35 @@ def withdraw():
 # Accepted √
 @app.route('/')
 def home():
-    return redirect(url_for(dashboard))
+    return redirect(url_for("static", filename="dashboard.html"))
 
 
 def get_student_from_db(stuid):
     anss = StudentEntry.query.filter(StudentEntry.stuid == stuid).all()
     for ans in anss:
-        return ans
+        and_f = StudentEntry(ans.stuid, ans.openid, ans.authSha1, ans.tempAuth)
+        return and_f, ans
     return None
 
 
 # 绑定用户
-@app.route('/bind')
+@app.route('/bind', methods=['POST'])
 def bind():
     jd = request.json
     stuid = int(jd["stuid"])
-    stu = get_student_from_db(stuid)
+    stu, entry = get_student_from_db(stuid)
     sha1 = jd["authSha1"]
     if stu is None or stu.authSha1 != sha1:
         return json.dumps({
             "state": -1,
             "message": "invalid identity"
         })
-    openid = getOpenID(jd["code"])
-    stu.openid = openid
+    # openid = getOpenID(jd["code"])
+    openid = "123456"
+    entry.openid = openid
     db.session.commit()
     session.permanent = True
-    session[session.get("user")] = openid
+    session['username'] = openid
     return json.dumps({
         "state": 233,
         "message": "bind successful"

@@ -33,14 +33,14 @@ def is_allowed_room(room):
 
 
 # 允许的段为 0 - max_seg
-def is_allowed_segment(segment, max_seg=12):
-    if segment < 0 or segment >= max_seg:
+def is_allowed_segment(segment):
+    if segment < 0:
         return False
     return True
 
 
 # 允许的原因为 1 - max_reason
-def is_allowed_reason(reason, max_reason = 500):
+def is_allowed_reason(reason, max_reason=500):
     reason = len(reason)
     if reason <= 1 or reason > max_reason:
         return False

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=0.8">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//unpkg.com/vue/dist/vue.js"></script>
+    <script src="//unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+    <style type="text/css">
+        @import url("//unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css");
+
+        body, html {
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent
+        }
+    </style>
+    <title>绑定用户</title>
+</head>
+
+<body>
+<div id="app">
+    <el-row style="text-align:center">
+        <br><br>
+        <font size="5px">绑定用户</font><br><br><br>
+    </el-row>
+    <el-row>
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" style="width:90%">
+            <el-form-item label="姓名" prop="name">
+                <el-input v-model="ruleForm.name"></el-input>
+            </el-form-item>
+            <el-form-item label="学号" prop="stuid">
+                <el-input v-model="ruleForm.stuid"></el-input>
+            </el-form-item>
+            <el-form-item label="身份证号" prop="idcard">
+                <el-input v-model="ruleForm.idcard"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                <el-button @click="resetForm('ruleForm')">重置</el-button>
+            </el-form-item>
+        </el-form>
+    </el-row>
+</div>
+<script>
+    var Main = {
+        data() {
+            return {
+                ruleForm: {
+                    name: '',
+                    stuid: '',
+                    idcard: ''
+                },
+                rules: {
+                    name: [
+                        {required: true, message: '请输入姓名', trigger: 'blur'},
+                        {max: 20, message: '姓名不可超过20个字符', trigger: 'blur'}
+                    ],
+                    stuid: [
+                        {required: true, message: '请输入学号', trigger: 'blur'},
+                        {min: 8, max: 8, message: '长度应为8个数字', trigger: 'blur'}
+                    ],
+                    idcard: [
+                        {required: true, message: '请输入18位身份证号', trigger: 'blur'},
+                        {min: 18, max: 18, message: '长度应为18个字符', trigger: 'blur'}
+                    ]
+                }
+            };
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (!valid) {
+                        alert('数据不合法，请检查输入项…');
+                        return false;
+                    } else {
+                        // Submit Here
+                        let name = this.ruleForm.name;
+                        let stuid = this.ruleForm.stuid;
+                        let idcard = this.ruleForm.idcard;
+                        alert('submit! ' + name + " " + stuid + " " + idcard);
+                    }
+                });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            }
+        }
+    };
+    var Ctor = Vue.extend(Main);
+    new Ctor().$mount('#app');
+</script>
+</body>
+
+</html>
