@@ -100,6 +100,15 @@ def submit():
     return render_template("submit.html")
 
 
+def add_occupy_to_date(date, room, seg):
+    date = str(date)
+    if date not in room_occupy:
+        room_occupy[date] = {}
+    if room not in room_occupy[date]:
+        room_occupy[date][room] = 0
+    room_occupy[date][room] |= (1 << seg)
+
+
 @app.route('/submitResult', methods=['POST'])
 def submitResult():
     jd = request.json
@@ -123,6 +132,7 @@ def submitResult():
     req = RequestEntry(stuid, room, date, seg, reason)
     db.session.add(req)
     db.session.commit()
+    add_occupy_to_date(date, room, seg)
     return json.dumps({
         "state": 233,
         "message": "submit success"
