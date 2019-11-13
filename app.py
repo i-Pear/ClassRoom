@@ -30,8 +30,19 @@ def getOpenID(code):
 
 def getStuID(openid):
     # 在这里查询student数据库
-    db.query(StudentEntry).filter_by(name='user1').all()
-    return "20184444"
+    answers = StudentEntry.query.filter(openid=int(openid)).all()
+    for ans in answers:
+        return json.dumps({
+            "state": 221,
+            "message": "ok",
+            "data": {
+                "stuid": ans.stuid
+            }
+        })
+    return json.dumps({
+        "state": -1,
+        "message": "without this openid"
+    })
 
 
 # dashboard series
