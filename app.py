@@ -32,17 +32,8 @@ def getStuID(openid):
     # 在这里查询student数据库
     answers = StudentEntry.query.filter(openid=int(openid)).all()
     for ans in answers:
-        return json.dumps({
-            "state": 221,
-            "message": "ok",
-            "data": {
-                "stuid": ans.stuid
-            }
-        })
-    return json.dumps({
-        "state": -1,
-        "message": "without this openid"
-    })
+        return True, ans.stuid
+    return False, -1
 
 
 # dashboard series
@@ -54,7 +45,7 @@ def dashboard():
 
 
 # 根据日期返回教室占用
-@app.route('/getOccupy')
+@app.route('/getOccupy', methods=['POST'])
 def getOccupy():
     date = str(request.args["date"])
     if not is_allowed_date(date):
@@ -76,7 +67,7 @@ def getOccupy():
 
 
 # 返回单个房间的占用情况
-@app.route("/getOccupyByRoom")
+@app.route("/getOccupyByRoom", methods=['POST'])
 def getOccupyByRoom():
     room = str(request.args["room"])
     date = str(request.args["date"])
@@ -102,21 +93,30 @@ def getOccupyByRoom():
 # 返回网页 （借哪个教室）
 @app.route('/submit')
 def submit():
-    openid = getOpenID(str(request.args["code"]))
     return render_template("submit.html")
 
 
-@app.route('/submitResult')
+@app.route('/submitResult', methods=['POST'])
 def submitResult():
     jd = request.json
+    openid = getOpenID(str(jd["code"]))
+    room = str(jd["room"])
     date = jd["date"]
-    # TODO 这里要对date做校验,至于怎样算是一个合法的日期输入呢？我们不得而知
-
-    request_time = datetime.datetime.now()
-    req = RequestEntry(int(jd["stuid"]), jd["classroom"], date, jd["segment"], str(request_time))
+    seg = int(jd["segment"])
+    reason = str(jd["requestReason"])
+    success, stuid = getStuID(openid)
+    if not (success and is_allowed_room(room) and is_allowed_date(date) and is_allowed_reason(reason) and is_allowed_segment(seg)):
+        return json.dumps({
+            "state": -1,
+            "message": "format error"
+        })
+    req = RequestEntry(stuid, room, date, seg, reason)
     db.session.add(req)
     db.session.commit()
-    return 'OK!'
+    return json.dumps({
+        "state": 233,
+        "message": "submit success"
+    })
 
 
 # record series
@@ -124,30 +124,63 @@ def submitResult():
 @app.route('/record')
 def record():
     openid = getOpenID(str(request.args["code"]))
-    stuid = getStuID(openid)
+    success, stuid = getStuID(openid)
+    if not success:
+        return json.dumps({
+            "state": -1,
+            "message": "invalid openid"
+        })
     request_records = RequestEntry.query.filter(RequestEntry.stuid == stuid).all()
-    # TODO 把过期的请求删一下
-
-    return render_template("record.html", records=request_records)
+    recs = []
+    for rec in request_records:
+        if not is_expired(rec.date):
+            recs.append({
+                "id": rec.id,
+                "stuid": rec.stuid,
+                "classroom": rec.classroom,
+                "date": rec.date,
+                "segment": rec.segment,
+                "requestTime": rec.requestTime,
+                "requestReason": rec.requestReason,
+                "status": rec.status
+            })
+    return json.dumps({
+        "state": 233,
+        "message": "records success",
+        "date": recs
+    })
 
 
 # 撤回
 @app.route('/withdraw')
 def withdraw():
+    openid = getOpenID(str(request.args["code"]))
+    success, stuid = getStuID(openid)
+    if not success:
+        return json.dumps({
+            "state": -1,
+            "message": "invalid openid"
+        })
     withdrawID = str(request.args["id"])
+    res = RequestEntry.query.filter(RequestEntry.stuid == stuid and RequestEntry.id == withdrawID).all()
+    db.session.delete(res)
+    db.session.commit()
+    return json.dumps({
+        "state": 233,
+        "message": "delete success"
+    })
 
 
 # Accepted √
 @app.route('/')
 def home():
-    return "home"
-    # return redirect("/dashboard")
+    return redirect(url_for(dashboard))
 
 
 # 绑定用户
 @app.route('/bind')
 def bind():
-    return render_template("bind.html")
+    return "fxx"
 
 
 # 验证用户绑定信息

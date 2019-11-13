@@ -29,7 +29,7 @@ class RequestEntry(db.Model):
 class ClassroomEntry(db.Model):
     __tablename__ = "classroom"
 
-    classroom = db.Column(db.VARCHAR(20), index=True, nullable=False,primary_key=True)
+    classroom = db.Column(db.VARCHAR(20), index=True, nullable=False, primary_key=True)
     date = db.Column(db.INTEGER, index=True, nullable=False)
     occupy = db.Column(db.INTEGER, default=0)
 
