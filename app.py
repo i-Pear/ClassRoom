@@ -121,7 +121,7 @@ def submitResult():
 
 
 # record series
-# 订单 渲染
+# 订单
 @app.route('/record')
 def record():
     openid = getOpenID(str(request.args["code"]))
