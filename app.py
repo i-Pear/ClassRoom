@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 import time
 import urllib.request
+from args_format import *
 
 WECHAT_APPID = ""
 WECHAT_APPSECRET = ""
@@ -13,9 +14,9 @@ db = SQLAlchemy(app)
 import init_db
 from entity import *
 
-# key：教室名称如 一号楼A302 类型string
+# key：教室名称如 一号楼_A302 类型string
 # value：教室状态如 000000000000 类型int
-room_occupy = {"2019/10/01": {"一号楼A302": 0}}
+room_occupy = {"20191001": {"一号楼_A302": 0}}
 
 
 # Accepted √
@@ -45,9 +46,45 @@ def dashboard():
 @app.route('/getOccupy')
 def getOccupy():
     date = str(request.args["date"])
+    if not is_allowed_date(date):
+        return json.dumps({
+            "state": -1,
+            "message": "format error"
+        })
     if date in room_occupy:
-        return json.dumps(room_occupy[date])
-    return json.dumps({})
+        return json.dumps({
+            "state": 231,
+            "message": "request success",
+            "data": room_occupy[date]
+        })
+    return json.dumps({
+        "state": 232,
+        "message": "request success, no room occupied",
+        "data": {}
+    })
+
+
+# 返回单个房间的占用情况
+@app.route("/getOccupyByRoom")
+def getOccupyByRoom():
+    room = str(request.args["room"])
+    date = str(request.args["date"])
+    if not is_allowed_date(date) or not is_allowed_room(room):
+        return json.dumps({
+            "state": -1,
+            "message": "format error"
+        })
+    answers = ClassroomEntry.query.filter(ClassroomEntry.classroom == room and ClassroomEntry.date == int(date)).all()
+    for ans in answers:
+        return json.dumps({
+            "state": 231,
+            "message": "get success",
+            "data": ans.occupy
+        })
+    return json.dumps({
+        "state": -1,
+        "message": "can't find the room in this date"
+    })
 
 
 # submit series
@@ -92,7 +129,8 @@ def withdraw():
 # Accepted √
 @app.route('/')
 def home():
-    return redirect("/dashboard")
+    return "home"
+    # return redirect("/dashboard")
 
 
 # 绑定用户
