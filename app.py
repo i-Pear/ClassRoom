@@ -4,6 +4,7 @@ import json
 import time
 import urllib.request
 from args_format import *
+from hashlib import sha1
 
 WECHAT_APPID = ""
 WECHAT_APPSECRET = ""
@@ -180,7 +181,19 @@ def home():
 # 绑定用户
 @app.route('/bind')
 def bind():
-    return "fxx"
+    jd = request.json
+    stuid = int(jd["stuid"])
+    openid = getOpenID(jd["code"])
+    sha1_obj = sha1()
+    sha1_obj.update(str(stuid) + str(openid))
+    sha1code = sha1_obj.hexdigest()
+    stu = StudentEntry(stuid, openid, sha1code, "Student")
+    db.session.add(stu)
+    db.session.commit()
+    return json.dumps({
+        "state": 233,
+        "message": "bind successful"
+    })
 
 
 # 验证用户绑定信息
