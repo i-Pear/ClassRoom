@@ -18,6 +18,8 @@ db = SQLAlchemy(app)
 import init_db
 from entity import *
 
+__debug_mode__ = True
+
 # key：教室名称如 一号楼_A302 类型string
 # value：教室状态如 000000000000 类型int
 room_occupy = {"20191001": {"一号楼_A302": 0, "建筑楼_A666": 0}}
@@ -108,7 +110,20 @@ def add_occupy_to_date(date, room, seg):
         room_occupy[date] = {}
     if room not in room_occupy[date]:
         room_occupy[date][room] = 0
-    room_occupy[date][room] |= (1 << seg)
+    if room_occupy[date][room] & seg != 0:
+        return False
+    if __debug_mode__:
+        entry = ClassroomEntry.query.filter(ClassroomEntry.classroom == room).filter(
+            ClassroomEntry.date == date).first()
+        if entry is []:
+            entry = ClassroomEntry(room, int(date), seg)
+            db.session.add(entry)
+            db.session.commit()
+        else:
+            entry.occupy |= seg
+            db.session.commit()
+    room_occupy[date][room] |= seg
+    return True
 
 
 @app.route('/submitResult', methods=['POST'])
@@ -134,11 +149,17 @@ def submitResult():
     req = RequestEntry(stuid, room, date, seg, reason)
     db.session.add(req)
     db.session.commit()
-    add_occupy_to_date(date, room, seg)
-    return json.dumps({
-        "state": 233,
-        "message": "submit success"
-    })
+    sta = add_occupy_to_date(date, room, seg)
+    if sta:
+        return json.dumps({
+            "state": 233,
+            "message": "submit success"
+        })
+    else:
+        return json.dumps({
+            "state": -1,
+            "message": "room conflict"
+        })
 
 
 # record series
@@ -229,8 +250,11 @@ def bind():
             "state": -1,
             "message": "invalid identity"
         })
-    # openid = getOpenID(jd["code"])
-    openid = "123456"
+    openid = None
+    if __debug_mode__:
+        openid = "123456"
+    else:
+        openid = getOpenID(jd["code"])
     entry.openid = openid
     db.session.commit()
     session.permanent = True
