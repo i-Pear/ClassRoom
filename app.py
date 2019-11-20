@@ -49,6 +49,28 @@ def getStuID(openid):
     return False, -1
 
 
+def add_occupy_to_date(date, room, seg):
+    date = str(date)
+    if date not in room_occupy:
+        room_occupy[date] = {}
+    if room not in room_occupy[date]:
+        room_occupy[date][room] = 0
+    if room_occupy[date][room] & seg != 0:
+        return False
+    if __debug_mode__:
+        entry = ClassroomEntry.query.filter(ClassroomEntry.classroom == room).filter(
+            ClassroomEntry.date == date).first()
+        if entry is []:
+            entry = ClassroomEntry(room, int(date), seg)
+            db.session.add(entry)
+            db.session.commit()
+        else:
+            entry.occupy |= seg
+            db.session.commit()
+    room_occupy[date][room] |= seg
+    return True
+
+
 # --------------- Pages ------------------
 
 
@@ -91,6 +113,7 @@ def record():
 
 
 # 根据日期返回教室占用
+# POST参数：date
 @app.route('/getOccupyOperation', methods=['POST'])
 def getOccupyOperation():
     date = str(request.args["date"])
@@ -113,6 +136,7 @@ def getOccupyOperation():
 
 
 # 返回单个房间的占用情况
+# POST参数：room date
 @app.route("/getOccupyByRoomOperation", methods=['POST'])
 def getOccupyByRoomOperation():
     room = str(request.args["room"])
@@ -137,28 +161,8 @@ def getOccupyByRoomOperation():
     })
 
 
-def add_occupy_to_date(date, room, seg):
-    date = str(date)
-    if date not in room_occupy:
-        room_occupy[date] = {}
-    if room not in room_occupy[date]:
-        room_occupy[date][room] = 0
-    if room_occupy[date][room] & seg != 0:
-        return False
-    if __debug_mode__:
-        entry = ClassroomEntry.query.filter(ClassroomEntry.classroom == room).filter(
-            ClassroomEntry.date == date).first()
-        if entry is []:
-            entry = ClassroomEntry(room, int(date), seg)
-            db.session.add(entry)
-            db.session.commit()
-        else:
-            entry.occupy |= seg
-            db.session.commit()
-    room_occupy[date][room] |= seg
-    return True
-
-
+# 处理提交请求 并返回提交结果
+# POST参数：room date segment requestReason
 @app.route('/submitResultOperation', methods=['POST'])
 def submitResultOperation():
     jd = request.json
@@ -195,7 +199,8 @@ def submitResultOperation():
         })
 
 
-# 订单
+# 返回订单
+# POST参数：无
 @app.route('/recordQueryOperation')
 def recordQueryOperation():
     openid = session['username']
@@ -232,6 +237,7 @@ def recordQueryOperation():
 
 
 # 撤回
+# POST 参数：id
 @app.route('/withdrawOperation')
 def withdrawOperation():
     openid = session['username']
@@ -257,6 +263,7 @@ def withdrawOperation():
 
 
 # 绑定用户
+# POST参数：stuid authSha1 code
 @app.route('/bindOperation', methods=['POST'])
 def bindOperation():
     jd = request.json
