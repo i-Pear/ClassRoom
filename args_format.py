@@ -2,7 +2,7 @@ import datetime
 
 builds = []
 
-with open(r'E:\Softs\Projects\pycharmProjects\ClassRoom\builds.txt', "r", encoding="utf-8") as f:
+with open(r'E:\builds.txt', "r", encoding="utf-8") as f:
     build = f.readline()
     while build != "end_list" and build != "end_list\n":
         rooms = [build[:-1]]
