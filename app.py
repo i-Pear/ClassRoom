@@ -42,6 +42,11 @@ def getStuID(openid):
     return False, -1
 
 
+@app.route('/favicon.ico')
+def icon():
+    return redirect(url_for("static", filename="favicon.ico"))
+
+
 # dashboard series
 # 教室占用网页
 # Accepted √
