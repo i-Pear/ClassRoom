@@ -25,7 +25,14 @@ __debug_mode__ = True
 room_occupy = {"20191001": {"一号楼_A302": 0, "建筑楼_A666": 0}}
 
 
-# Accepted √
+def get_student_from_db(stuid):
+    anss = StudentEntry.query.filter(StudentEntry.stuid == stuid).all()
+    for ans in anss:
+        and_f = StudentEntry(ans.stuid, ans.openid, ans.authSha1, ans.tempAuth)
+        return and_f, ans
+    return None
+
+
 def getOpenID(code):
     url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code" % (
         WECHAT_APPID, WECHAT_APPSECRET, code)
@@ -42,22 +49,50 @@ def getStuID(openid):
     return False, -1
 
 
+# --------------- Pages ------------------
+
+
 @app.route('/favicon.ico')
 def icon():
     return redirect(url_for("static", filename="favicon.ico"))
 
 
-# dashboard series
+# 主页面
+@app.route('/')
+def home():
+    return redirect(url_for("static", filename="dashboard.html"))
+
+
 # 教室占用网页
-# Accepted √
 @app.route('/dashboard')
 def dashboard():
     return redirect(url_for("static", filename="dashboard.html"))
 
 
+# 返回网页 （借哪个教室）
+@app.route('/submit')
+def submit():
+    return redirect(url_for("static", filename="submit.html"))
+
+
+# 返回网页 （操作记录）
+@app.route('/record')
+def record():
+    return redirect(url_for("static", filename="record.html"))
+
+
+# 返回网页 （管理员界面）
+@app.route('/admin')
+def record():
+    return redirect(url_for("static", filename="admin.html"))
+
+
+# --------------- Operations ------------------
+
+
 # 根据日期返回教室占用
-@app.route('/getOccupy', methods=['POST'])
-def getOccupy():
+@app.route('/getOccupyOperation', methods=['POST'])
+def getOccupyOperation():
     date = str(request.args["date"])
     if not is_allowed_date(date):
         return json.dumps({
@@ -78,8 +113,8 @@ def getOccupy():
 
 
 # 返回单个房间的占用情况
-@app.route("/getOccupyByRoom", methods=['POST'])
-def getOccupyByRoom():
+@app.route("/getOccupyByRoomOperation", methods=['POST'])
+def getOccupyByRoomOperation():
     room = str(request.args["room"])
     date = str(request.args["date"])
     if not is_allowed_date(date) or not is_allowed_room(room):
@@ -100,13 +135,6 @@ def getOccupyByRoom():
         "message": "can't find the room in this date",
         "data": 0
     })
-
-
-# submit series
-# 返回网页 （借哪个教室）
-@app.route('/submit')
-def submit():
-    return redirect(url_for("static", filename="submit.html"))
 
 
 def add_occupy_to_date(date, room, seg):
@@ -131,8 +159,8 @@ def add_occupy_to_date(date, room, seg):
     return True
 
 
-@app.route('/submitResult', methods=['POST'])
-def submitResult():
+@app.route('/submitResultOperation', methods=['POST'])
+def submitResultOperation():
     jd = request.json
     openid = session['username']
     if openid is None:
@@ -167,10 +195,9 @@ def submitResult():
         })
 
 
-# record series
 # 订单
-@app.route('/record')
-def record():
+@app.route('/recordQueryOperation')
+def recordQueryOperation():
     openid = session['username']
     if openid is None:
         return json.dumps({
@@ -205,8 +232,8 @@ def record():
 
 
 # 撤回
-@app.route('/withdraw')
-def withdraw():
+@app.route('/withdrawOperation')
+def withdrawOperation():
     openid = session['username']
     if openid is None:
         return json.dumps({
@@ -229,23 +256,9 @@ def withdraw():
     })
 
 
-# Accepted √
-@app.route('/')
-def home():
-    return redirect(url_for("static", filename="dashboard.html"))
-
-
-def get_student_from_db(stuid):
-    anss = StudentEntry.query.filter(StudentEntry.stuid == stuid).all()
-    for ans in anss:
-        and_f = StudentEntry(ans.stuid, ans.openid, ans.authSha1, ans.tempAuth)
-        return and_f, ans
-    return None
-
-
 # 绑定用户
-@app.route('/bind', methods=['POST'])
-def bind():
+@app.route('/bindOperation', methods=['POST'])
+def bindOperation():
     jd = request.json
     stuid = int(jd["stuid"])
     stu, entry = get_student_from_db(stuid)
@@ -270,6 +283,5 @@ def bind():
     })
 
 
-# Accepted √
 if __name__ == '__main__':
     app.run()
