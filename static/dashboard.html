@@ -4,9 +4,14 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=0.8">
-    <script src="//unpkg.com/vue/dist/vue.js"></script>
-    <script src="//unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+
+    <!-- <script src="//unpkg.com/vue/dist/vue.js"></script> -->
+    <!-- <script src="//unpkg.com/element-ui@2.12.0/lib/index.js"></script>  -->
+    <script src="./vue.js"></script>
+    <script src="./index.js"></script>
+
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="./mscript.js"></script>
     <script>
         function placeholderPic() {
             document.documentElement.style.fontSize = document.documentElement.offsetWidth / 60 + "px"; //同上
@@ -15,7 +20,8 @@
         placeholderPic();
         window.onresize = function () {  //窗口改变时再次执行一次函数即可
             placeholderPic();
-        }
+        };
+
     </script>
     <title>空闲查询</title>
     <style type="text/css">
@@ -155,6 +161,14 @@
             },
             dateChange(t) {
                 console.log(t);
+                let year = t.getFullYear().toString();
+                let month = (t.getMonth() + 1).toString();
+                let day = (t.getDate()).toString();
+                if (month.length === 1) month = "0" + month;
+                if (day.length === 1) day = "0" + day;
+
+                let res = getOccupyFunction(year + month + day);
+                console.log(res);
                 this.tableData.pop();
             }
         }

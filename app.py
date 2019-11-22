@@ -73,7 +73,6 @@ def add_occupy_to_date(date, room, seg):
 
 # --------------- Pages ------------------
 
-
 @app.route('/favicon.ico')
 def icon():
     return redirect(url_for("static", filename="favicon.ico"))
@@ -105,8 +104,13 @@ def record():
 
 # 返回网页 （管理员界面）
 @app.route('/admin')
-def record():
+def admin():
     return redirect(url_for("static", filename="admin.html"))
+
+
+# @app.route('/static/<name>')
+# def staticRes(name):
+#     return redirect(url_for("static", filename=str(name)))
 
 
 # --------------- Operations ------------------
